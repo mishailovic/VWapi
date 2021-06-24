@@ -1,32 +1,35 @@
 from datetime import datetime
+from typing import Dict, Optional
 import requests
 
 
 class WeatherAPI:
-    def __init__(self, weather_token):
+    def __init__(self, weather_token: str) -> Optional[Dict[str, str]]:
         self.weather_token = weather_token
         self.weather_url = "https://pro.openweathermap.org/data/2.5/forecast/hourly?"
-        self.geo_url = "https://geocoder.ls.hereapi.com/6.2/geocode.json"
 
-    def get_geo(self, address):
-        try:
-            request = f"https://nominatim.openstreetmap.org/search.php?q={address}&format=jsonv2"
-            response = requests.get(request)
-            location = response.json()
-            if response.status_code == 200:
-                if location != []:
-                    return {
-                        "lat": location[0]["lat"],
-                        "lng": location[0]["lon"],
-                        "place_name": location[0]["display_name"]
-                    }
-        except:
-            pass
+    def get_geo(self, address: str):
+        request = (
+            f"https://nominatim.openstreetmap.org/search.php?q={address}&format=jsonv2"
+        )
+        response = requests.get(request)
+        location = response.json()
+        if response.status_code == 200:  # Is anything else possible?
+            if location == []:
+                return None
 
-    def get_weather(self, name, language):
+            return {
+                "lat": str(location[0]["lat"]),
+                "lng": str(location[0]["lon"]),
+                "place_name": location[0]["display_name"],
+            }
+        else:
+            return None
+
+    def get_weather(self, name: str, language: str):
         if geo := self.get_geo(name):
-            lat = str(geo["lat"])
-            lng = str(geo["lng"])
+            lat = geo["lat"]
+            lng = geo["lng"]
 
             response = requests.get(
                 f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric"

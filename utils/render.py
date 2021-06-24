@@ -4,7 +4,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate
-from loguru import logger
+
 
 from .constants import messages
 

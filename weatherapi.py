@@ -1,25 +1,32 @@
-from os import error
-from typing import Optional
-import io
 from starlette.responses import StreamingResponse
-import time
-import sys
 import config
 from utils import WeatherAPI, Render
-from loguru import logger
 from fastapi import FastAPI
+import pydantic
+
+import utils
 
 app = FastAPI()
 
-from fastapi.responses import FileResponse
 
-
-@app.get("/{language}/{city}")
-def read_root(language: str, city: str):
-    weather = WeatherAPI(config.owm_token)
-    info = weather.get_weather(city, language=language)
+@app.get(
+    "/{language}/{city}",
+    responses={
+        200: {
+            "content": {
+                "application/json": {  # Should we make 4xx?
+                    "example": {"status": "error", "message": "location not found"},
+                },
+                "image/png": {},
+            },
+        },
+    },
+)
+def read_root(language: utils.LANGUAGES, city: str):
+    weather = WeatherAPI(config.OWM_TOKEN)
+    info = weather.get_weather(city, language=language.name)
     if info == None:
         return {"status": "error", "message": "location not found"}
-    else:    
-        image = Render().make_hourly(info, language)
+    else:
+        image = Render().make_hourly(info, language.name)
         return StreamingResponse(image, media_type="image/jpeg")
