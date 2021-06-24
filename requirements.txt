@@ -1,0 +1,8 @@
+fastapi
+loguru
+requests
+pillow
+matplotlib
+numpy
+scipy
+uvicorn
