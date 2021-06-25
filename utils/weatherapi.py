@@ -4,11 +4,11 @@ import requests
 
 
 class WeatherAPI:
-    def __init__(self, weather_token: str) -> Optional[Dict[str, str]]:
+    def __init__(self, weather_token: str) -> None:
         self.weather_token = weather_token
         self.weather_url = "https://pro.openweathermap.org/data/2.5/forecast/hourly?"
 
-    def get_geo(self, address: str):
+    def get_geo(self, address: str) -> Optional[Dict[str, str]]:
         request = (
             f"https://nominatim.openstreetmap.org/search.php?q={address}&format=jsonv2"
         )
