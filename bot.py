@@ -17,7 +17,7 @@ async def send_welcome(message: types.Message):
 async def send_weather(message: types.Message):
     if not (city := message.get_args()):
         return await message.answer("Введите город")
-    url = f"http://weather.hotaru.ga/ru/{city}"
+    url = f"https://weather.hotaru.ga/ru/{city}"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp.headers["content-type"] == "image/jpeg":
