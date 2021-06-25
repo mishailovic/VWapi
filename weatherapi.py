@@ -2,7 +2,6 @@ from starlette.responses import StreamingResponse
 import config
 from utils import WeatherAPI, Render
 from fastapi import FastAPI
-import pydantic
 
 import utils
 
