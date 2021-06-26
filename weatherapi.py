@@ -3,7 +3,6 @@ import config
 from utils import WeatherAPI, Render
 from fastapi import FastAPI
 from typing import Optional
-from loguru import logger
 
 import utils
 
