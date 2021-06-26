@@ -19,14 +19,20 @@ async def with_timestamp(
     if timestamp != None:
         info = weather.get_weather(city, language=language.name, timestamp=timestamp)
         if info == None:
-            return {"status": "error", "message": "location not found"}
+            return {
+                "status": "error", 
+                "message": "location not found"
+            }
         else:
             image = Render().make_hourly(info, language.name)
             return StreamingResponse(image, media_type="image/jpeg")
     else:
         info = weather.get_weather(city, language=language.name)
         if info == None:
-            return {"status": "error", "message": "location not found"}
+            return {
+                "status": "error",
+                "message": "location not found"
+            }
         else:
             image = Render().make_hourly(info, language.name)
             return StreamingResponse(image, media_type="image/jpeg")

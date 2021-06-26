@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, Optional
 import requests
+from time import time
 
 
 class WeatherAPI:
@@ -20,11 +21,7 @@ class WeatherAPI:
             if location == []:
                 return None
 
-            return {
-                "lat": str(location[0]["lat"]),
-                "lng": str(location[0]["lon"]),
-                "place_name": location[0]["display_name"],
-            }
+            return {"lat": str(location[0]["lat"]), "lng": str(location[0]["lon"])}
         else:
             return None
 
@@ -33,75 +30,38 @@ class WeatherAPI:
             lat = geo["lat"]
             lng = geo["lng"]
 
-            if timestamp == None:
-                response = requests.get(
-                    f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric"
-                )
-                if response.status_code == 200:
-                    json_data = response.json()
-                    dt = int(json_data["list"][2]["dt"])
+            response = requests.get(
+                f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric"
+            )
+            if response.status_code == 200:
+                json_data = response.json()
+                timezone = int(json_data["city"]["timezone"])
+                utcdiff = 3 * 3600  # yes)
 
-                    return {
-                        "country": json_data["city"]["country"],
-                        "city": json_data["city"]["name"],
-                        "time": datetime.utcfromtimestamp(dt).strftime("%H:%M"),
-                        "summary": json_data["list"][2]["weather"][0]["description"],
-                        "apparentTemperature": json_data["list"][2]["main"][
-                            "feels_like"
-                        ],
-                        "temperature": json_data["list"][2]["main"]["temp"],
-                        "wind": json_data["list"][2]["wind"]["speed"],
-                        "humidity": json_data["list"][2]["main"]["humidity"] / 100,
-                        "icon": json_data["list"][2]["weather"][0]["icon"],
-                        "+2": json_data["list"][4]["main"]["temp"],
-                        "+4": json_data["list"][6]["main"]["temp"],
-                        "+6": json_data["list"][8]["main"]["temp"],
-                        "+8": json_data["list"][10]["main"]["temp"],
-                        "+10": json_data["list"][12]["main"]["temp"],
-                        "+12": json_data["list"][14]["main"]["temp"],
-                    }
+                if timestamp == None:
+                    realtime = round(round(time() / 3600)) * 3600 - utcdiff + timezone
+                else:
+                    realtime = (
+                        round(round(timestamp / 3600)) * 3600 - utcdiff + timezone
+                    )
+
+                return {
+                    "country": json_data["city"]["country"],
+                    "city": json_data["city"]["name"],
+                    "time": datetime.fromtimestamp(realtime).strftime("%H:%M"),
+                    "summary": json_data["list"][0]["weather"][0]["description"],
+                    "apparentTemperature": json_data["list"][0]["main"]["feels_like"],
+                    "temperature": json_data["list"][0]["main"]["temp"],
+                    "wind": json_data["list"][0]["wind"]["speed"],
+                    "humidity": json_data["list"][0]["main"]["humidity"] / 100,
+                    "icon": json_data["list"][0]["weather"][0]["icon"],
+                    "+2": json_data["list"][2]["main"]["temp"],
+                    "+4": json_data["list"][4]["main"]["temp"],
+                    "+6": json_data["list"][6]["main"]["temp"],
+                    "+8": json_data["list"][8]["main"]["temp"],
+                    "+10": json_data["list"][10]["main"]["temp"],
+                    "+12": json_data["list"][12]["main"]["temp"],
+                }
 
             else:
-                response = requests.get(
-                    f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric"
-                )
-                if response.status_code == 200:
-                    json_data = response.json()
-                    timezone = json_data["city"]["timezone"]
-                    timestamp = (
-                        round(timestamp / 3600) * 3600 + timezone
-                    )  # getting closest existing timestamp to the chosen timestamp
-                    for weather in range(
-                        96
-                    ):  # owm always gives 96 timestamps, no need to count them from json
-                        if str(json_data["list"][weather]["dt"]) == str(timestamp):
-                            return {
-                                "country": json_data["city"]["country"],
-                                "city": json_data["city"]["name"],
-                                "time": datetime.utcfromtimestamp(timestamp).strftime(
-                                    "%H:%M"
-                                ),
-                                "summary": json_data["list"][weather]["weather"][0][
-                                    "description"
-                                ],
-                                "apparentTemperature": json_data["list"][weather][
-                                    "main"
-                                ]["feels_like"],
-                                "temperature": json_data["list"][weather]["main"][
-                                    "temp"
-                                ],
-                                "wind": json_data["list"][weather]["wind"]["speed"],
-                                "humidity": json_data["list"][weather]["main"][
-                                    "humidity"
-                                ]
-                                / 100,
-                                "icon": json_data["list"][weather]["weather"][0][
-                                    "icon"
-                                ],
-                                "+2": json_data["list"][weather + 2]["main"]["temp"],
-                                "+4": json_data["list"][weather + 4]["main"]["temp"],
-                                "+6": json_data["list"][weather + 6]["main"]["temp"],
-                                "+8": json_data["list"][weather + 8]["main"]["temp"],
-                                "+10": json_data["list"][weather + 10]["main"]["temp"],
-                                "+12": json_data["list"][weather + 12]["main"]["temp"],
-                            }
+                return None
