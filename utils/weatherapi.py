@@ -14,7 +14,9 @@ class WeatherAPI:
         )
         response = requests.get(request)
         location = response.json()
-        if response.status_code == 200:  # Is anything else possible? answer: everything is posiible...
+        if (
+            response.status_code == 200
+        ):  # Is anything else possible? answer: everything is posiible...
             if location == []:
                 return None
 
@@ -44,7 +46,9 @@ class WeatherAPI:
                         "city": json_data["city"]["name"],
                         "time": datetime.utcfromtimestamp(dt).strftime("%H:%M"),
                         "summary": json_data["list"][2]["weather"][0]["description"],
-                        "apparentTemperature": json_data["list"][2]["main"]["feels_like"],
+                        "apparentTemperature": json_data["list"][2]["main"][
+                            "feels_like"
+                        ],
                         "temperature": json_data["list"][2]["main"]["temp"],
                         "wind": json_data["list"][2]["wind"]["speed"],
                         "humidity": json_data["list"][2]["main"]["humidity"] / 100,
@@ -56,25 +60,44 @@ class WeatherAPI:
                         "+10": json_data["list"][12]["main"]["temp"],
                         "+12": json_data["list"][14]["main"]["temp"],
                     }
-                
+
             else:
-                response = requests.get(f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric")
+                response = requests.get(
+                    f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric"
+                )
                 if response.status_code == 200:
                     json_data = response.json()
                     timezone = json_data["city"]["timezone"]
-                    timestamp = round(timestamp / 3600) * 3600 + timezone # getting closest existing timestamp to the chosen timestamp
-                    for weather in range(96): # owm always gives 96 timestamps, no need to count them from json
+                    timestamp = (
+                        round(timestamp / 3600) * 3600 + timezone
+                    )  # getting closest existing timestamp to the chosen timestamp
+                    for weather in range(
+                        96
+                    ):  # owm always gives 96 timestamps, no need to count them from json
                         if str(json_data["list"][weather]["dt"]) == str(timestamp):
                             return {
                                 "country": json_data["city"]["country"],
                                 "city": json_data["city"]["name"],
-                                "time": datetime.utcfromtimestamp(timestamp).strftime("%H:%M"),
-                                "summary": json_data["list"][weather]["weather"][0]["description"],
-                                "apparentTemperature": json_data["list"][weather]["main"]["feels_like"],
-                                "temperature": json_data["list"][weather]["main"]["temp"],
+                                "time": datetime.utcfromtimestamp(timestamp).strftime(
+                                    "%H:%M"
+                                ),
+                                "summary": json_data["list"][weather]["weather"][0][
+                                    "description"
+                                ],
+                                "apparentTemperature": json_data["list"][weather][
+                                    "main"
+                                ]["feels_like"],
+                                "temperature": json_data["list"][weather]["main"][
+                                    "temp"
+                                ],
                                 "wind": json_data["list"][weather]["wind"]["speed"],
-                                "humidity": json_data["list"][weather]["main"]["humidity"] / 100,
-                                "icon": json_data["list"][weather]["weather"][0]["icon"],
+                                "humidity": json_data["list"][weather]["main"][
+                                    "humidity"
+                                ]
+                                / 100,
+                                "icon": json_data["list"][weather]["weather"][0][
+                                    "icon"
+                                ],
                                 "+2": json_data["list"][weather + 2]["main"]["temp"],
                                 "+4": json_data["list"][weather + 4]["main"]["temp"],
                                 "+6": json_data["list"][weather + 6]["main"]["temp"],
@@ -82,10 +105,3 @@ class WeatherAPI:
                                 "+10": json_data["list"][weather + 10]["main"]["temp"],
                                 "+12": json_data["list"][weather + 12]["main"]["temp"],
                             }
-
-
-
-
-
-
-            
