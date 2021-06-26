@@ -23,9 +23,9 @@ python3 -m uvicorn weatherapi:app --reload
 import requests
 import time
 language = "en" # can be "en" or "ru"
-place = Moscow # can be any city, place, street, or ышеу, geocoder automatically selects location. 
+place = Moscow # can be any city, place, street, or site, geocoder automatically selects location. 
 timestamp = round(time()) # optional timestamp, can be any unix timestamp from now to now + plus three days 
-r = requests.get(f"https://weather.hotaru.ga/{language}{city}{place}?timestamp={timestamp}")
+r = requests.get(f"https://weather.hotaru.ga/{language}/{place}?timestamp={timestamp}")
 ```
 Now r.content is an image containing weather for Moscow in English language for the current time.
 
