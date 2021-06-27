@@ -1,7 +1,7 @@
-from aiogram.types.inline_query_result import InlineQueryResultCachedPhoto, InlineQueryResultPhoto
+from aiogram.types.inline_query_result import InlineQueryResultPhoto
 import aiohttp
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.types import InlineQuery, InputMediaPhoto, InlineQueryResultArticle
+from aiogram.types import InlineQuery
 from config import TOKEN
 from time import sleep, time
 import hashlib
@@ -49,6 +49,8 @@ async def inline_echo(inline_query: InlineQuery):
         title=f'Погода для места: {text}',
         photo_url=url,
         thumb_url=url,
+        photo_width=800,
+        photo_height=656
     )
     await bot.answer_inline_query(inline_query.id, results=[item], cache_time=300)
 
