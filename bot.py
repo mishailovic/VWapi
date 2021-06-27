@@ -1,6 +1,11 @@
+from aiogram.types.inline_query_result import InlineQueryResultCachedPhoto, InlineQueryResultPhoto
 import aiohttp
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.types import InlineQuery, InputMediaPhoto, InlineQueryResultArticle
 from config import TOKEN
+from time import sleep, time
+import hashlib
+import uuid
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
@@ -31,6 +36,21 @@ async def send_weather(message: types.Message):
         await message.answer(
             "Не удалось подключиться к API, вы ввели несуществующий город, или хост упал.",
         )
+
+@dp.inline_handler()
+async def inline_echo(inline_query: InlineQuery):
+    sleep(2) # prevent api from flooding
+    text = inline_query.query
+    urluuid = uuid.uuid4()
+    url = f"https://weather.hotaru.ga/ru/{text}?fuck_cache={urluuid}"
+    result_id: str = hashlib.md5(text.encode()).hexdigest()
+    item = InlineQueryResultPhoto(
+        id=result_id,
+        title=f'Погода для места: {text}',
+        photo_url=url,
+        thumb_url=url,
+    )
+    await bot.answer_inline_query(inline_query.id, results=[item], cache_time=300)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ weather = WeatherAPI(config.OWM_TOKEN)
 
 @app.get("/{language}/{city}")
 async def with_timestamp(
-    language: utils.LANGUAGES, city: str, timestamp: Optional[int] = None
+    language: utils.LANGUAGES, city: str, timestamp: Optional[int] = None, fuck_cache: Optional[str] = None # this value needed to bypass telegram url cache
 ):
     if timestamp != None:
         info = weather.get_weather(city, language=language.name, timestamp=timestamp)
