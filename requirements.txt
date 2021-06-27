@@ -1,7 +1,0 @@
-fastapi
-requests
-pillow
-matplotlib
-numpy
-scipy
-uvicorn
