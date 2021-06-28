@@ -3,3 +3,4 @@
 .idea
 .env
 __pycache__
+utils/__pycache__
