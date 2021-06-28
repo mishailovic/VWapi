@@ -87,17 +87,17 @@ class Render:
         txt = Image.new("RGBA", im.size, (255, 255, 255, 0))
         graph = self.make_graph(temp_chart, data["icon"])
 
-        font_h = f"{self.path}/resources/fonts/ObjectSans-Heavy.otf"
-        font_l = f"{self.path}/resources/fonts/ObjectSans-Regular.otf"
+        font_h = f"{self.path}/resources/fonts/Montserrat-Black.ttf"
+        font_l = f"{self.path}/resources/fonts/Montserrat-Medium.ttf"
 
-        temp_font = ImageFont.truetype(font=font_h, size=108)
+        temp_font = ImageFont.truetype(font=font_h, size=112)
         temp_chart_font_now = ImageFont.truetype(font=font_h, size=25)
         temp_chart_font = ImageFont.truetype(font=font_l, size=25)
         city_font = ImageFont.truetype(font=font_l, size=32)
         feels_like_font = ImageFont.truetype(font=font_l, size=30)
-        weather_font = ImageFont.truetype(font=font_h, size=43)
+        weather_font = ImageFont.truetype(font=font_h, size=38)
         weather_font_big = ImageFont.truetype(font=font_h, size=58)
-        wind_font = ImageFont.truetype(font=font_l, size=29)
+        wind_font = ImageFont.truetype(font=font_l, size=32)
         time_font = ImageFont.truetype(font=font_l, size=24)
         time_font_now = ImageFont.truetype(font=font_h, size=24)
 
@@ -109,27 +109,27 @@ class Render:
         text_size = ImageDraw.Draw(txt).textsize
 
         draw.text(
-            (im.width - text_size(city, city_font)[0] - 77, 47), city, font=city_font
+            (im.width - text_size(city, city_font)[0] - 77, 32), city, font=city_font
         )
         draw.text(
-            (im.width - text_size(temp, temp_font)[0] - 77, 102),
+            (im.width - text_size(temp, temp_font)[0] - 77, 72),
             text=temp,
             font=temp_font,
         )
         draw.text(
-            (im.width - text_size(feels_like, feels_like_font)[0] - 77, 197),
+            (im.width - text_size(feels_like, feels_like_font)[0] - 77, 186),
             text=feels_like,
             font=feels_like_font,
             fill=(255, 255, 255, 221),
         )
         draw.text(
-            ((im.width - text_size(wind, wind_font)[0] - 77), 283),
+            ((im.width - text_size(wind, wind_font)[0] - 77), 276),
             text=wind,
             font=wind_font,
             fill=(255, 255, 255, 221),
         )
         draw.text(
-            ((im.width - text_size(humidity, wind_font)[0] - 77), 244),
+            ((im.width - text_size(humidity, wind_font)[0] - 77), 236),
             text=humidity,
             font=wind_font,
             fill=(255, 255, 255, 221),
