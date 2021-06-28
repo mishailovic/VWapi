@@ -11,7 +11,7 @@ class WeatherAPI:
 
     def get_geo(self, address: str) -> Optional[Dict[str, str]]:
         request = (
-            f"https://nominatim.openstreetmap.org/search.php?q={address}&format=jsonv2"
+            f"https://nominatim.openstreetmap.org/search.php?q={address}&format=jsonv2&addressdetails=1"
         )
         response = requests.get(request)
         location = response.json()
@@ -20,8 +20,8 @@ class WeatherAPI:
         ):  # Is anything else possible? answer: everything is posiible...
             if location == []:
                 return None
-
-            return {"lat": str(location[0]["lat"]), "lng": str(location[0]["lon"])}
+            address = location[0]["address"]
+            return {"lat": str(location[0]["lat"]), "lng": str(location[0]["lon"]), "name": str(address[list(address.keys())[0]])}
         else:
             return None
     
@@ -29,6 +29,7 @@ class WeatherAPI:
         if geo := self.get_geo(name):
             lat = geo["lat"]
             lng = geo["lng"]
+            name = geo["name"]
 
             response = requests.get(
                 f"{self.weather_url}lat={lat}&lon={lng}&appid={self.weather_token}&lang={language}&units=metric"
@@ -47,7 +48,7 @@ class WeatherAPI:
                     if str(json_data["list"][weather]["dt"]) == str(realtime):
                         return {
                             "country": json_data["city"]["country"],
-                            "city": json_data["city"]["name"],
+                            "city": name,
                             "time": datetime.utcfromtimestamp(realtime + timezone).strftime("%H:%M"),
                             "summary": json_data["list"][weather]["weather"][0]["description"],
                             "apparentTemperature": json_data["list"][weather]["main"]["feels_like"],
