@@ -8,7 +8,7 @@ Visual Weather api. Returns beautiful pictures with the current weather.
 
 # Installation:
 
-```
+```bash
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y git python3 python3-pip 
 git clone https://github.com/mishailovic/VWapi
@@ -19,7 +19,7 @@ python3 -m uvicorn weatherapi:app --reload
 
 # Usage:
 
-```
+```python
 import requests
 import time
 language = "en" # can be "en" or "ru"
