@@ -1,10 +1,9 @@
-import os, textwrap
+import os, textwrap, langdetect
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate
-
 
 from .constants import messages
 
@@ -90,16 +89,44 @@ class Render:
         font_h = f"{self.path}/resources/fonts/Montserrat-Black.ttf"
         font_l = f"{self.path}/resources/fonts/Montserrat-Medium.ttf"
 
+        city_font_jp = f"{self.path}/resources/fonts/NotoSansJP-Medium.otf" # Japanese
+        city_font_ko = f"{self.path}/resources/fonts/NotoSansKR-Medium.otf" # Korean
+        city_font_zh = f"{self.path}/resources/fonts/NotoSansSC-Medium.otf" # Chinese (Simplified)
+        city_font_ar = f"{self.path}/resources/fonts/Cairo-SemiBold.ttf" # Arabic
+        city_font_he = f"{self.path}/resources/fonts/Rubik-Medium.ttf" # Hebrew
+
+        city_font_misc = f"{self.path}/resources/fonts/NotoSans-Bold.ttf" # Other languages (Latin, Greek, etc)
+
         temp_font = ImageFont.truetype(font=font_h, size=112)
         temp_chart_font_now = ImageFont.truetype(font=font_h, size=25)
         temp_chart_font = ImageFont.truetype(font=font_l, size=25)
-        city_font = ImageFont.truetype(font=font_l, size=32)
         feels_like_font = ImageFont.truetype(font=font_l, size=30)
         weather_font = ImageFont.truetype(font=font_h, size=38)
         weather_font_big = ImageFont.truetype(font=font_h, size=58)
         wind_font = ImageFont.truetype(font=font_l, size=32)
         time_font = ImageFont.truetype(font=font_l, size=24)
         time_font_now = ImageFont.truetype(font=font_h, size=24)
+        city_font_pos = 32
+
+        # City name language detection
+        city_lang = langdetect.detect(city)
+
+        # Choose compatible font for the detected language
+        if city_lang == "jp":
+            city_font = ImageFont.truetype(font=city_font_jp, size=32)
+        elif city_lang == "ko":
+            city_font = ImageFont.truetype(font=city_font_ko, size=32)
+        elif city_lang == "zh-cn":
+            city_font = ImageFont.truetype(font=city_font_zh, size=32)
+        elif city_lang == "ar":
+            city_font = ImageFont.truetype(font=city_font_ar, size=32)
+            city_font_pos = 20
+        elif city_lang == "el":
+            city_font = ImageFont.truetype(font=city_font_misc, size=32)
+        elif city_lang == "he":
+            city_font = ImageFont.truetype(font=city_font_he, size=32)
+        else:
+            city_font = ImageFont.truetype(font=font_l, size=32) # Fallback to default font if no compatible font was found
 
         im.paste(bg)
         im.paste(ic, (64, 36), ic)
@@ -109,7 +136,7 @@ class Render:
         text_size = ImageDraw.Draw(txt).textsize
 
         draw.text(
-            (im.width - text_size(city, city_font)[0] - 77, 32), city, font=city_font
+            (im.width - text_size(city, city_font)[0] - 77, city_font_pos), city, font=city_font
         )
         draw.text(
             (im.width - text_size(temp, temp_font)[0] - 77, 72),
