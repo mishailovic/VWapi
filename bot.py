@@ -2,14 +2,14 @@ from aiogram.types.inline_query_result import InlineQueryResultPhoto
 import aiohttp
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineQuery
-from config import TOKEN
 from time import sleep, time
-import hashlib
 import uuid
+from config import TOKEN
+import requests
+import urllib.parse
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-
 
 @dp.message_handler(commands=["start", "help"])
 async def send_welcome(message: types.Message):
@@ -29,7 +29,7 @@ async def send_weather(message: types.Message):
                 response = await resp.read()
             else:
                 response = None
-    if response:
+    if response:    
         await message.answer_chat_action("upload_photo")
         await message.answer_photo(response)
     else:
@@ -41,19 +41,22 @@ async def send_weather(message: types.Message):
 async def inline_echo(inline_query: InlineQuery):
     sleep(2) # prevent api from flooding
     text = inline_query.query
-    urluuid = uuid.uuid4()
-    url = f"https://weather.hotaru.ga/ru/{text}?fuck_cache={urluuid}"
-    result_id: str = hashlib.md5(text.encode()).hexdigest()
-    item = InlineQueryResultPhoto(
-        id=result_id,
-        title=f'Погода для места: {text}',
-        photo_url=url,
-        thumb_url=url,
-        photo_width=800,
-        photo_height=656
-    )
-    await bot.answer_inline_query(inline_query.id, results=[item], cache_time=300)
-
-
+    urltext = urllib.parse.quote(text)
+    r = requests.get(f"https://nominatim.openstreetmap.org/search.php?q={urltext}&format=jsonv2")
+    if r.text != "[]":
+        urluuid = str(uuid.uuid4())
+        url = f"https://weather.hotaru.ga/ru/{urltext}?fuck_cache={urluuid}"
+        result_id = urluuid
+        item = InlineQueryResultPhoto(
+            id=result_id,
+            photo_url=url,
+            thumb_url=url,
+            photo_width	=800,
+            photo_height=656
+        )    
+        await bot.answer_inline_query(inline_query.id, results=[item], cache_time=1800)
+    else:
+        pass
+        
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
