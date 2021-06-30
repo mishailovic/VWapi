@@ -1,8 +1,8 @@
-import aiohttp, asyncio, uuid
+import aiohttp, asyncio, uuid, urllib, langid
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.types import InlineQuery, InlineQueryResultPhoto
-from config import TOKEN
+from aiogram.types import InlineQuery, InlineQueryResultPhoto, InlineQueryResultArticle, InputTextMessageContent
 
+from config import TOKEN
 from utils import constants
 
 languages = constants.messages["ms"].keys()
@@ -22,11 +22,12 @@ async def send_weather(message: types.Message):
     if not (city := message.get_args()):
         return await message.answer("Введите город")
 
-    lang = city.split(" ")[-1]
+    lang = langid.classify(city)[0]
     if lang not in languages:
         lang = "en"
 
-    async with session.get(f"https://weather.hotaru.ga/{lang}/{city}") as resp:
+    text_url = urllib.parse.quote_plus(city)
+    async with session.get(f"https://weather.hotaru.ga/{lang}/{text_url}") as resp:
         if resp.headers["content-type"] == "image/jpeg":
             response = await resp.read()
         else:
@@ -41,31 +42,38 @@ async def send_weather(message: types.Message):
 @dp.inline_handler()
 async def inline_echo(inline_query: InlineQuery):
     await asyncio.sleep(2) # prevent api from flooding
+    result_uuid = str(uuid.uuid4())
     text = inline_query.query
 
-    city_lang = text.split(" ")[-1]
-    if city_lang not in languages:
-        city_lang = "en"
+    if not text:
+        item = InlineQueryResultArticle(
+            id=result_uuid,
+            title="Введите название города.",
+            input_message_content=InputTextMessageContent("Введите название города.")
+        )
+        return await bot.answer_inline_query(inline_query.id, results=[item], cache_time=1800)
 
-    async with session.get(f"https://nominatim.openstreetmap.org/search.php?q={text}&format=jsonv2") as res:
+    lang = langid.classify(text)[0]
+    if lang not in languages:
+        lang = "en"
+
+    text_url = urllib.parse.quote_plus(text)
+    async with session.get(f"https://nominatim.openstreetmap.org/search.php?q={text_url}&format=jsonv2") as res:
         city = await res.text()
 
-    result_uuid = str(uuid.uuid4())
     if city != "[]":
         item = InlineQueryResultPhoto(
             id=result_uuid,
-            photo_url=f"https://weather.hotaru.ga/{city_lang}/{text}?fuck_cache={result_uuid}",
-            thumb_url=f"https://weather.hotaru.ga/{city_lang}/{text}?fuck_cache={result_uuid}",
+            photo_url=f"https://weather.hotaru.ga/{lang}/{text_url}?fuck_cache={result_uuid}",
+            thumb_url=f"https://weather.hotaru.ga/{lang}/{text_url}?fuck_cache={result_uuid}",
             photo_width=800,
             photo_height=656
         )
     else:
-        item = InlineQueryResultPhoto(
+        item = InlineQueryResultArticle(
             id=result_uuid,
-            photo_url=f"https://weather.hotaru.ga/404",
-            thumb_url=f"https://weather.hotaru.ga/404",
-            photo_width=800,
-            photo_height=656
+            title="Город не найден.",
+            input_message_content=InputTextMessageContent("Город не найден.")
         )
 
     await bot.answer_inline_query(inline_query.id, results=[item], cache_time=1800)
