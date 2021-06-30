@@ -35,7 +35,3 @@ async def with_timestamp(
         else:
             image = Render().make_hourly(info, language.name)
             return StreamingResponse(image, media_type="image/jpeg")
-
-@app.get("/404")
-async def notfound():
-    return StreamingResponse(open("resources/404.jpg", "rb"), media_type="image/jpeg")
