@@ -1,6 +1,14 @@
-<h1 style="text-align: center;">VWapi</h1>
+<h1 align="center">VWapi</h1>
 
-Visual Weather api. Returns beautiful pictures with the current weather.
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mishailovic_VWapi&metric=alert_status)](https://sonarcloud.io/dashboard?id=mishailovic_VWapi)
+[![GitHub issues](https://img.shields.io/github/issues/mishailovic/VWapi)](https://github.com/mishailovic/VWapi/issues)
+[![GitHub forks](https://img.shields.io/github/forks/mishailovic/VWapi)](https://github.com/mishailovic/VWapi/network)
+[![GitHub stars](https://img.shields.io/github/stars/mishailovic/VWapi)](https://github.com/mishailovic/VWapi/stargazers)
+[![GitHub license](https://img.shields.io/github/license/mishailovic/VWapi)](https://github.com/mishailovic/VWapi/blob/master/LICENSE)
+
+
+<p align="center">Visual Weather api. Returns beautiful pictures with the current weather.
+</p>
 
 ![image](images/Москва.jpg)
 ![image](images/Франкфурт.jpg)
@@ -22,15 +30,15 @@ python3 -m uvicorn weatherapi:app --reload
 ```python
 import requests
 import time
+from PIL import Image
+import io
 language = "en" # can be "en" or "ru"
-place = Moscow # can be any city, place, street, or site, geocoder automatically selects location. 
-timestamp = round(time()) # optional timestamp, can be any unix timestamp from now to now + plus three days 
+place = "Moscow" # can be any city, place, street, or site, geocoder automatically selects location. 
+timestamp = round(time.time()) # optional timestamp, can be any unix timestamp from now, to now + three days 
 r = requests.get(f"https://weather.hotaru.ga/{language}/{place}?timestamp={timestamp}")
+image = Image.open(io.BytesIO(r.content))
+image.show()
 ```
-Now r.content is an image containing weather for Moscow in English language for the current time.
 
 # Credits:
 Most of the code ~~stolen~~ taken from https://github.com/adrian-kalinin/TeleWeatherRobot huge thanks to its developer @adrian-kalinin
-
-
-
