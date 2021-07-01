@@ -24,7 +24,6 @@ async def weather_(
 ):
     loop = get_running_loop()
     exec = loop.run_in_executor
-    timestamp = timestamp if timestamp else None
     if not lang:
         lang = (await exec(None, get_lang, city))[0]
         if lang not in constants.messages["ms"].keys():
