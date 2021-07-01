@@ -7,3 +7,5 @@ scipy
 uvicorn
 langdetect
 langid
+pymongo
+dnspython

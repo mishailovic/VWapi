@@ -1,11 +1,12 @@
 import urllib
 import uuid
 
+from pymongo import MongoClient
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import (InlineQuery, InlineQueryResultArticle,
                            InlineQueryResultPhoto, InputTextMessageContent)
 
-from config import TOKEN
+from config import TOKEN, MONGO_DB
 from utils.http import get_session
 
 bot = Bot(token=TOKEN)
@@ -13,9 +14,27 @@ dp = Dispatcher(bot)
 
 API_BASE = "https://weather.hotaru.ga"
 
+if MONGO_DB:
+    client = MongoClient(MONGO_DB)
+    db = client["vwapibot"]
+    analytics = db["analytics"]
+
+async def create_user_entry(id):
+    analytics.insert_one({
+        "_id": id,
+        "used_start": 0,
+        "used_weather": 0,
+        "used_inline": 0
+    })
 
 @dp.message_handler(commands=["start", "help"], run_task=True)
 async def send_welcome(message: types.Message):
+    if MONGO_DB:
+        if not analytics.find_one({"_id": message.from_user.id}):
+            await create_user_entry(message.from_user.id)
+
+        analytics.update_one({"_id": message.from_user.id}, {"$inc": {"used_start": 1}})
+
     await message.reply(
         "Привет! Я бот который может рассказать тебе о текущей погоде. Отправь в чат /weather <Город> и я вышлю тебе картинку с текущей погодой."
     )
@@ -23,6 +42,12 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler(commands=["weather"], run_task=True)
 async def send_weather(message: types.Message):
+    if MONGO_DB:
+        if not analytics.find_one({"_id": message.from_user.id}):
+            await create_user_entry(message.from_user.id)
+
+        analytics.update_one({"_id": message.from_user.id}, {"$inc": {"used_weather": 1}})
+
     if not (city := message.get_args()):
         return await message.reply("Введите город")
 
@@ -45,6 +70,12 @@ async def send_weather(message: types.Message):
 
 @dp.inline_handler(run_task=True)
 async def inline_echo(inline_query: InlineQuery):
+    if MONGO_DB:
+        if not analytics.find_one({"_id": inline_query.from_user.id}):
+            await create_user_entry(inline_query.from_user.id)
+
+        analytics.update_one({"_id": inline_query.from_user.id}, {"$inc": {"used_inline": 1}})
+
     result_uuid = str(uuid.uuid4())
     text = inline_query.query
 
