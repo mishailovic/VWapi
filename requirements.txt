@@ -9,3 +9,4 @@ langdetect
 langid
 pymongo
 dnspython
+lru-dict
