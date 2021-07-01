@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import (InlineQuery, InlineQueryResultArticle,
                            InlineQueryResultPhoto, InputTextMessageContent)
 
-from config import TOKEN, MONGO_DB
+from config import TOKEN, MONGO_DB, OWM_TOKEN
 from utils.http import get_session
 
 bot = Bot(token=TOKEN)
@@ -94,7 +94,7 @@ async def inline_echo(inline_query: InlineQuery):
     city = urllib.parse.quote_plus(text)
     session = await get_session()
     async with session.get(
-        f"https://nominatim.openstreetmap.org/search.php?q={city}&format=jsonv2"
+        f"https://api.openweathermap.org/geo/1.0/direct?q={city}&appid={OWM_TOKEN}"
     ) as res:
         city_ = await res.text()
 
