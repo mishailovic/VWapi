@@ -12,7 +12,7 @@ from utils.http import get_session
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
-API_BASE = "https://weather.hotaru.ga"
+API_BASE = "https://weather.yaunm.ga"
 
 if MONGO_DB:
     client = MongoClient(MONGO_DB)
