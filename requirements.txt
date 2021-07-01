@@ -10,3 +10,4 @@ langid
 pymongo
 dnspython
 lru-dict
+aiohttp
