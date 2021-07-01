@@ -6,4 +6,3 @@ numpy
 scipy
 uvicorn
 langdetect
-langid

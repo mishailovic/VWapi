@@ -1,11 +1,8 @@
-import os
-import textwrap
+import os, textwrap, langdetect
+from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
-
-import langdetect
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
 from scipy import interpolate
 
 from .constants import messages
@@ -38,9 +35,7 @@ class Render:
         buf.close()
         plot = self.png_crop(plot)
 
-        grad = Image.open(
-            f"{self.path}/resources/card/{icon}_grad.png"
-        ).convert("RGBA")
+        grad = Image.open(f"{self.path}/resources/card/{icon}_grad.png").convert("RGBA")
         back = Image.new("RGBA", grad.size, (255, 255, 255, 0))
         plot = plot.resize(grad.size, resample=Image.ANTIALIAS)
         back.paste(grad, plot)
@@ -49,6 +44,8 @@ class Render:
     def png_crop(self, image):
         """Crops all transparent borders in png image"""
         image_size = image.size
+        image_box = image.getbbox()
+
         image_components = image.split()
 
         rgb_image = Image.new("RGB", image_size, (0, 0, 0))
@@ -73,9 +70,7 @@ class Render:
         wind = str(round(data["wind"])) + messages["ms"][lang]
         humidity = str(int(data["humidity"] * 100)) + "%"
         feels_like = (
-            messages["feels_like"][lang]
-            + str(round(data["apparentTemperature"]))
-            + "°"
+            messages["feels_like"][lang] + str(round(data["apparentTemperature"])) + "°"
         )
         bw_divs = [79, 186, 293, 400, 507, 614, 721]
 
@@ -84,9 +79,7 @@ class Render:
             f"{self.path}/resources/backgrounds/" + data["icon"] + ".png"
         ).convert("RGBA")
         card = Image.open(f"{self.path}/resources/card/card.png")
-        ic = Image.open(
-            f"{self.path}/resources/icons/" + data["icon"] + ".png"
-        )
+        ic = Image.open(f"{self.path}/resources/icons/" + data["icon"] + ".png")
         ic.thumbnail((999, 180), resample=Image.ANTIALIAS)
         wind_ic = Image.open(f"{self.path}/resources/icons/wind_ic.png")
         hum_ic = Image.open(f"{self.path}/resources/icons/hum_ic.png")
@@ -96,21 +89,13 @@ class Render:
         font_h = f"{self.path}/resources/fonts/Montserrat-Black.ttf"
         font_l = f"{self.path}/resources/fonts/Montserrat-Medium.ttf"
 
-        city_font_jp = (
-            f"{self.path}/resources/fonts/NotoSansJP-Medium.otf"  # Japanese
-        )
-        city_font_ko = (
-            f"{self.path}/resources/fonts/NotoSansKR-Medium.otf"  # Korean
-        )
-        city_font_zh = f"{self.path}/resources/fonts/NotoSansSC-Medium.otf"  # Chinese (Simplified)
-        city_font_ar = (
-            f"{self.path}/resources/fonts/Cairo-SemiBold.ttf"  # Arabic
-        )
-        city_font_he = (
-            f"{self.path}/resources/fonts/Rubik-Medium.ttf"  # Hebrew
-        )
+        city_font_jp = f"{self.path}/resources/fonts/NotoSansJP-Medium.otf" # Japanese
+        city_font_ko = f"{self.path}/resources/fonts/NotoSansKR-Medium.otf" # Korean
+        city_font_zh = f"{self.path}/resources/fonts/NotoSansSC-Medium.otf" # Chinese (Simplified)
+        city_font_ar = f"{self.path}/resources/fonts/Cairo-SemiBold.ttf" # Arabic
+        city_font_he = f"{self.path}/resources/fonts/Rubik-Medium.ttf" # Hebrew
 
-        city_font_misc = f"{self.path}/resources/fonts/NotoSans-Bold.ttf"  # Other languages (Latin, Greek, etc)
+        city_font_misc = f"{self.path}/resources/fonts/NotoSans-Bold.ttf" # Other languages (Latin, Greek, etc)
 
         temp_font = ImageFont.truetype(font=font_h, size=112)
         temp_chart_font_now = ImageFont.truetype(font=font_h, size=25)
@@ -141,9 +126,7 @@ class Render:
         elif city_lang == "he":
             city_font = ImageFont.truetype(font=city_font_he, size=32)
         else:
-            city_font = ImageFont.truetype(
-                font=font_l, size=32
-            )  # Fallback to default font if no compatible font was found
+            city_font = ImageFont.truetype(font=font_l, size=32) # Fallback to default font if no compatible font was found
 
         im.paste(bg)
         im.paste(ic, (64, 36), ic)
@@ -153,9 +136,7 @@ class Render:
         text_size = ImageDraw.Draw(txt).textsize
 
         draw.text(
-            (im.width - text_size(city, city_font)[0] - 77, city_font_pos),
-            city,
-            font=city_font,
+            (im.width - text_size(city, city_font)[0] - 77, city_font_pos), city, font=city_font
         )
         draw.text(
             (im.width - text_size(temp, temp_font)[0] - 77, 72),
@@ -182,24 +163,13 @@ class Render:
         )
         im.paste(
             wind_ic,
-            (
-                im.width
-                - text_size(wind, wind_font)[0]
-                - 77
-                - 10
-                - wind_ic.width,
-                282,
-            ),
+            (im.width - text_size(wind, wind_font)[0] - 77 - 10 - wind_ic.width, 282),
             wind_ic,
         )
         im.paste(
             hum_ic,
             (
-                im.width
-                - text_size(humidity, wind_font)[0]
-                - 77
-                - 10
-                - hum_ic.width,
+                im.width - text_size(humidity, wind_font)[0] - 77 - 10 - hum_ic.width,
                 240,
             ),
             hum_ic,
@@ -242,8 +212,7 @@ class Render:
                                 ),
                                 min(yl, yc, yr) - 38,
                             ),
-                            text=str(round(temp_chart[bw_divs.index(x)]))
-                            + "°",
+                            text=str(round(temp_chart[bw_divs.index(x)])) + "°",
                             font=temp_chart_font_now,
                             fill=(64, 64, 64, 255),
                         )
@@ -261,8 +230,7 @@ class Render:
                                 ),
                                 min(yl, yc, yr) - 38,
                             ),
-                            text=str(round(temp_chart[bw_divs.index(x)]))
-                            + "°",
+                            text=str(round(temp_chart[bw_divs.index(x)])) + "°",
                             font=temp_chart_font,
                             fill=(64, 64, 64, 221),
                         )
@@ -361,20 +329,15 @@ class Render:
                         text=liness[1],
                         font=ImageFont.truetype(font=font_h, size=32),
                     )
-                except Exception:
+                except:
                     pass
                 try:
                     draw.text(
-                        (
-                            64,
-                            text_size(liness[0], weather_font)[1] * 2
-                            + 230
-                            + 3,
-                        ),
+                        (64, text_size(liness[0], weather_font)[1] * 2 + 230 + 3),
                         text=liness[2],
                         font=ImageFont.truetype(font=font_h, size=32),
                     )
-                except Exception:
+                except:
                     pass
             elif len(lines) > 1:
                 draw.text((64, 245), text=lines[0], font=weather_font)
