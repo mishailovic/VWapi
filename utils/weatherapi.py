@@ -11,25 +11,24 @@ class WeatherAPI:
             "https://pro.openweathermap.org/data/2.5/forecast/hourly?"
         )
 
-    async def get_geo(self, address: str) -> Optional[Dict[str, str]]:
+    async def get_geo(self, address: str, language: str) -> Optional[Dict[str, str]]:
         url = (
-            "https://nominatim.openstreetmap.org/search.php?"
-            + f"q={address}&format=jsonv2&addressdetails=1"
+            "https://api.openweathermap.org/geo/1.0/direct?"
+            + f"q={address}&appid={self.weather_token}"
         )
         location = await fetch(url)
         if not location:
             return
-        address = location[0]["address"]
         return {
             "lat": str(location[0]["lat"]),
             "lng": str(location[0]["lon"]),
-            "name": str(address[list(address.keys())[0]]),
+            "name": str(location[0]["local_names"][language]),
         }
 
     async def get_weather(
         self, name: str, language: str, timestamp: str = None
     ):
-        geo = await self.get_geo(name)
+        geo = await self.get_geo(name, language)
         if not geo:
             return
         lat = geo["lat"]
