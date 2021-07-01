@@ -131,9 +131,9 @@ class Render:
             city_font = ImageFont.truetype(font=city_font_jp, size=32)
         elif city_lang == "ko":
             city_font = ImageFont.truetype(font=city_font_ko, size=32)
-        elif city_lang == "zh-cn":
+        elif city_lang in ("zh-cn", "zh-tw",):
             city_font = ImageFont.truetype(font=city_font_zh, size=32)
-        elif city_lang == "ar":
+        elif city_lang in ("ar", "fa", "ur", "pa",):
             city_font = ImageFont.truetype(font=city_font_ar, size=32)
             city_font_pos = 20
         elif city_lang == "el":
