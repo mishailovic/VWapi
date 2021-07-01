@@ -14,14 +14,14 @@ dp = Dispatcher(bot)
 API_BASE = "https://weather.hotaru.ga"
 
 
-@dp.message_handler(commands=["start", "help"])
+@dp.message_handler(commands=["start", "help"], run_task=True)
 async def send_welcome(message: types.Message):
     await message.reply(
         "Привет! Я бот который может рассказать тебе о текущей погоде. Отправь в чат /weather <Город> и я вышлю тебе картинку с текущей погодой."
     )
 
 
-@dp.message_handler(commands=["weather"])
+@dp.message_handler(commands=["weather"], run_task=True)
 async def send_weather(message: types.Message):
     if not (city := message.get_args()):
         return await message.reply("Введите город")
@@ -43,7 +43,7 @@ async def send_weather(message: types.Message):
         )
 
 
-@dp.inline_handler()
+@dp.inline_handler(run_task=True)
 async def inline_echo(inline_query: InlineQuery):
     result_uuid = str(uuid.uuid4())
     text = inline_query.query
