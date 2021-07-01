@@ -17,7 +17,7 @@ renderer = Render()
 
 
 @app.get("/")
-async def weather(
+async def weather_(
     city: str,
     lang: Optional[LANGUAGES] = None,
     timestamp: Optional[int] = None,
