@@ -1,37 +1,41 @@
-from starlette.responses import StreamingResponse
-import config
-from utils import WeatherAPI, Render
-from fastapi import FastAPI
+from asyncio import get_running_loop
+from functools import partial
 from typing import Optional
 
-import utils
+from fastapi import FastAPI
+from langid import classify as get_lang
+from starlette.responses import StreamingResponse
+
+from config import OWM_TOKEN
+from utils import LANGUAGES, Render, WeatherAPI, constants
 
 app = FastAPI()
 
-weather = WeatherAPI(config.OWM_TOKEN)
+weather = WeatherAPI(OWM_TOKEN)
+
+renderer = Render()
 
 
-@app.get("/{language}/{city}")
-async def with_timestamp(
-    language: utils.LANGUAGES, city: str, timestamp: Optional[int] = None, fuck_cache: Optional[str] = None # this value needed to bypass telegram url cache
+@app.get("/")
+async def weather(
+    city: str,
+    lang: Optional[LANGUAGES] = None,
+    timestamp: Optional[int] = None,
 ):
-    if timestamp != None:
-        info = weather.get_weather(city, language=language.name, timestamp=timestamp)
-        if info == None:
-            return {
-                "status": "error", 
-                "message": "location not found"
-            }
-        else:
-            image = Render().make_hourly(info, language.name)
-            return StreamingResponse(image, media_type="image/jpeg")
-    else:
-        info = weather.get_weather(city, language=language.name)
-        if info == None:
-            return {
-                "status": "error",
-                "message": "location not found"
-            }
-        else:
-            image = Render().make_hourly(info, language.name)
-            return StreamingResponse(image, media_type="image/jpeg")
+    loop = get_running_loop()
+    exec = loop.run_in_executor
+    timestamp = timestamp if timestamp else None
+    if not lang:
+        lang = (await exec(None, get_lang, city))[0]
+        if lang not in constants.messages["ms"].keys():
+            lang = "en"
+    language = LANGUAGES(lang)
+    info = await weather.get_weather(
+        city, language=language.name, timestamp=timestamp
+    )
+    if info:
+        image = await exec(
+            None, partial(renderer.make_hourly, info, language.name)
+        )
+        return StreamingResponse(image, media_type="image/jpeg")
+    return {"status": "error", "message": "location not found"}
