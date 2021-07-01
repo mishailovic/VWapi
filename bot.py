@@ -16,7 +16,7 @@ API_BASE = "https://weather.hotaru.ga"
 
 @dp.message_handler(commands=["start", "help"])
 async def send_welcome(message: types.Message):
-    await message.answer(
+    await message.reply(
         "Привет! Я бот который может рассказать тебе о текущей погоде. Отправь в чат /weather <Город> и я вышлю тебе картинку с текущей погодой."
     )
 
@@ -24,7 +24,7 @@ async def send_welcome(message: types.Message):
 @dp.message_handler(commands=["weather"])
 async def send_weather(message: types.Message):
     if not (city := message.get_args()):
-        return await message.answer("Введите город")
+        return await message.reply("Введите город")
 
     city = urllib.parse.quote_plus(city)
     session = await get_session()
@@ -36,9 +36,9 @@ async def send_weather(message: types.Message):
 
     if response:
         await message.answer_chat_action("upload_photo")
-        await message.answer_photo(response)
+        await message.reply_photo(response)
     else:
-        await message.answer(
+        await message.reply(
             "Не удалось подключиться к API, вы ввели несуществующий город, или хост упал."
         )
 
