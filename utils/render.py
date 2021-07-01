@@ -104,7 +104,7 @@ class Render:
         )
         city_font_zh = f"{self.path}/resources/fonts/NotoSansSC-Medium.otf"  # Chinese (Simplified)
         city_font_ar = (
-            f"{self.path}/resources/fonts/Cairo-SemiBold.ttf"  # Arabic
+            f"{self.path}/resources/fonts/Vazir-Medium.ttf"  # Arabic or languages using letters from its alphabet
         )
         city_font_he = (
             f"{self.path}/resources/fonts/Rubik-Medium.ttf"  # Hebrew
