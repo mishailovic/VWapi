@@ -389,8 +389,8 @@ class Render:
         im = Image.alpha_composite(im, txt)
 
         bio = BytesIO()
-        bio.name = "image.png"
-        im.save(bio, "png")
+        bio.name = "image.jpg"
+        im.convert("RGB").save(bio, "JPEG")
         bio.seek(0)
 
         return bio
