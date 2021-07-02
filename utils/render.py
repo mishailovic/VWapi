@@ -41,7 +41,7 @@ class Render:
 
         grad = Image.open(
             f"{self.path}/resources/card/{icon}_grad.png"
-        ).convert("RGBA")
+        )
         back = Image.new("RGBA", grad.size, (255, 255, 255, 0))
         plot = plot.resize(grad.size, resample=Image.ANTIALIAS)
         back.paste(grad, plot)
@@ -78,15 +78,13 @@ class Render:
         im = Image.new("RGBA", (800, 656), (255, 255, 255, 0))
         bg = Image.open(
             f"{self.path}/resources/backgrounds/" + data["icon"] + ".png"
-        ).convert("RGBA")
+        )
         card = Image.open(f"{self.path}/resources/card/card.png")
         ic = Image.open(
             f"{self.path}/resources/icons/" + data["icon"] + ".png"
         )
-        ic.thumbnail((999, 180), resample=Image.ANTIALIAS)
         wind_ic = Image.open(f"{self.path}/resources/icons/wind_ic.png")
         hum_ic = Image.open(f"{self.path}/resources/icons/hum_ic.png")
-        txt = Image.new("RGBA", im.size, (255, 255, 255, 0))
         graph = self.make_graph(temp_chart, data["icon"])
 
         font_h = f"{self.path}/resources/fonts/Montserrat-Black.ttf"
@@ -145,8 +143,8 @@ class Render:
         im.paste(ic, (64, 36), ic)
         im.paste(card, (0, im.height - card.height), card)
         im.paste(graph, (24, im.height - graph.height - 20), graph)
-        draw = ImageDraw.Draw(txt)
-        text_size = ImageDraw.Draw(txt).textsize
+        draw = ImageDraw.Draw(im)
+        text_size = ImageDraw.Draw(im).textsize
 
         draw.text(
             (im.width - text_size(city, city_font)[0] - 77, city_font_pos),
@@ -381,8 +379,6 @@ class Render:
                 )
             else:
                 draw.text((64, 253), text=lines[0], font=weather_font)
-
-        im = Image.alpha_composite(im, txt)
 
         bio = BytesIO()
         bio.name = "image.jpg"
