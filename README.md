@@ -40,6 +40,12 @@ image = Image.open(io.BytesIO(r.content))
 image.show()
 ```
 
+# Notes about performance
+## StreamingResponse
+Usually StreamingResponse is slower than Response, but it depends on the environment where VWapi is gonna be deployed, run some tests before and after using StreamingResponse and see which one has better performance.
+
+If you want to use StreamingResponse set `USE_STREAMING_RESPONSE` environment variable to `true`.
+
 # Credits:
 Most of the code ~~stolen~~ taken from https://github.com/adrian-kalinin/TeleWeatherRobot huge thanks to its developer @adrian-kalinin  
 Weather icons taken from https://github.com/manifestinteractive/weather-underground-icons

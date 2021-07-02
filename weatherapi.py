@@ -1,9 +1,9 @@
-import time
+import os, time
 from asyncio import get_running_loop
 from functools import partial
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from langid import classify as get_lang
 from starlette.responses import StreamingResponse
 
@@ -33,7 +33,10 @@ async def weather_(
 
         if not cache_entry["expires"] <= int(time.time()):
             cache_entry["image"].seek(0)
-            return StreamingResponse(cache_entry["image"], media_type="image/jpeg")
+            if os.environ.get("USE_STREAMING_RESPONSE", "false") == "true":
+                return StreamingResponse(cache_entry["image"], media_type="image/jpeg")
+            else:
+                return Response(content=cache_entry["image"].read(), media_type="image/jpeg")
 
     loop = get_running_loop()
     exec = loop.run_in_executor
@@ -55,5 +58,8 @@ async def weather_(
             "expires": int(time.time()) + LRU_EXPIRE
         }
 
-        return StreamingResponse(image, media_type="image/jpeg")
+        if os.environ.get("USE_STREAMING_RESPONSE", "false") == "true":
+            return StreamingResponse(image, media_type="image/jpeg")
+        else:
+            return Response(content=image.read(), media_type="image/jpeg")
     return {"status": "error", "message": "location not found"}
