@@ -49,14 +49,9 @@ class Render:
 
     def png_crop(self, image):
         """Crops all transparent borders in png image"""
-        image_size = image.size
-        image_components = image.split()
+        bbox = image.getbbox()
 
-        rgb_image = Image.new("RGB", image_size, (0, 0, 0))
-        rgb_image.paste(image, mask=image_components[3])
-        cropped_box = rgb_image.getbbox()
-
-        return image.crop(cropped_box)
+        return image.crop(bbox)
 
     def make_hourly(self, data, lang):
         city = data["city"]
