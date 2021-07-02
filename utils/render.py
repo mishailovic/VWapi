@@ -29,13 +29,14 @@ class Render:
         ax.fill_between(x_new, y_new, min(y) - 1)
         ax.set_axis_off()
 
-        buf = BytesIO()
-        plt.savefig(buf, format="png", transparent=True)
-        buf.seek(0)
+        fig.canvas.draw()
 
-        plot = Image.open(buf)
-        plot.load()
-        buf.close()
+        w, h = fig.canvas.get_width_height()
+        buf = np.fromstring(fig.canvas.tostring_argb(), dtype=np.uint8)
+        buf.shape = (w, h, 4)
+        buf = np.roll(buf, 3, axis=2) # Convert ARGB to RGBA
+
+        plot = Image.frombytes("RGBA", (w, h), buf)
         plot = self.png_crop(plot)
 
         grad = Image.open(
