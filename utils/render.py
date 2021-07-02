@@ -82,7 +82,7 @@ class Render:
         card = Image.open(f"{self.path}/resources/card/card.png")
         ic = Image.open(
             f"{self.path}/resources/icons/" + data["icon"] + ".png"
-        )
+        ).convert("RGBA")
         wind_ic = Image.open(f"{self.path}/resources/icons/wind_ic.png")
         hum_ic = Image.open(f"{self.path}/resources/icons/hum_ic.png")
         graph = self.make_graph(temp_chart, data["icon"])
@@ -140,7 +140,7 @@ class Render:
             )  # Fallback to default font if no compatible font was found
 
         im.paste(bg)
-        im.paste(ic, (64, 36), ic)
+        im.paste(ic, (48, 8), ic)
         im.paste(card, (0, im.height - card.height), card)
         im.paste(graph, (24, im.height - graph.height - 20), graph)
         draw = ImageDraw.Draw(im)

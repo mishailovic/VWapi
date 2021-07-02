@@ -41,4 +41,5 @@ image.show()
 ```
 
 # Credits:
-Most of the code ~~stolen~~ taken from https://github.com/adrian-kalinin/TeleWeatherRobot huge thanks to its developer @adrian-kalinin
+Most of the code ~~stolen~~ taken from https://github.com/adrian-kalinin/TeleWeatherRobot huge thanks to its developer @adrian-kalinin  
+Weather icons taken from https://github.com/manifestinteractive/weather-underground-icons
