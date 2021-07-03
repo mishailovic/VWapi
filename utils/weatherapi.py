@@ -22,7 +22,7 @@ class WeatherAPI:
         return {
             "lat": str(location[0]["lat"]),
             "lng": str(location[0]["lon"]),
-            "name": str(location[0]["local_names"].get(language, "en") if location[0].get("local_names") else location[0]["name"]),
+            "name": str(location[0].get("local_names", {}).get(language, location[0]["name"])),
         }
 
     async def get_weather(
