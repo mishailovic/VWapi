@@ -5,7 +5,7 @@ from io import BytesIO
 import langdetect
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 from scipy import interpolate
 
 from .constants import messages
@@ -74,9 +74,9 @@ class Render:
         bw_divs = [79, 186, 293, 400, 507, 614, 721]
 
         im = Image.new("RGBA", (800, 656), (255, 255, 255, 0))
-        bg = Image.open(
-            f"{self.path}/resources/backgrounds/" + data["icon"] + ".png"
-        )
+        bg = ImageEnhance.Brightness(
+            Image.open(f"{self.path}/resources/backgrounds/" + data["icon"] + ".png")
+        ).enhance(0.6).filter(ImageFilter.GaussianBlur(radius=2)) # Reduce brightness to 0.6 to make text more visible and add blur
         card = Image.open(f"{self.path}/resources/card/card.png")
         ic = Image.open(
             f"{self.path}/resources/icons/" + data["icon"] + ".png"
