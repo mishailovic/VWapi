@@ -39,12 +39,10 @@ class Render:
         plot = Image.frombytes("RGBA", (w, h), buf)
         plot = self.png_crop(plot)
 
-        grad = Image.open(
-            f"{self.path}/resources/card/{icon}_grad.png"
-        )
-        back = Image.new("RGBA", grad.size, (255, 255, 255, 0))
-        plot = plot.resize(grad.size, resample=Image.ANTIALIAS)
-        back.paste(grad, plot)
+        mask = Image.open(f"{self.path}/resources/card/mask.png")
+        back = Image.new("RGBA", mask.size, (255, 255, 255, 0))
+        plot = plot.resize(mask.size, resample=Image.ANTIALIAS)
+        back.paste(mask, plot)
         return back
 
     def png_crop(self, image):
@@ -139,10 +137,8 @@ class Render:
                 font=font_l, size=32
             )  # Fallback to default font if no compatible font was found
 
-        im.paste(bg)
+        im.paste(bg.resize(im.size, resample=Image.ANTIALIAS))
         im.paste(ic, (48, 8), ic)
-        im.paste(card, (0, im.height - card.height), card)
-        im.paste(graph, (24, im.height - graph.height - 20), graph)
         draw = ImageDraw.Draw(im)
         text_size = ImageDraw.Draw(im).textsize
 
@@ -199,31 +195,37 @@ class Render:
             hum_ic,
         )
 
+        card_compose = Image.new("RGBA", (800, 380), (255, 255, 255, 0))
+        card_compose_final = Image.new("RGBA", (800, 380), (255, 255, 255, 0))
+
+        card_compose.paste(graph, (24, card_compose.height - graph.height - 20), graph)
+        card_compose_draw = ImageDraw.Draw(card_compose)
+
         for x in bw_divs:
-            for y in range(430, im.height - 1):
+            for y in range(0, card_compose.height - 1):
                 yl, yc, yr = 0, 0, 0
 
-                if im.getpixel((x, y)) == (255, 255, 255, 255):
+                if card_compose.getpixel((x, y)) == (255, 255, 255, 0):
                     continue
                 else:
                     yc = y
 
-                    for yy in range(430, im.height - 1):
-                        if im.getpixel((x - 15, yy)) != (255, 255, 255, 255):
+                    for yy in range(0, card_compose.height - 1):
+                        if card_compose.getpixel((x - 15, yy)) != (255, 255, 255, 0):
                             yl = yy
                             break
                         else:
                             continue
 
-                    for yy in range(430, im.height - 1):
-                        if im.getpixel((x + 15, yy)) != (255, 255, 255, 255):
+                    for yy in range(0, card_compose.height - 1):
+                        if card_compose.getpixel((x + 15, yy)) != (255, 255, 255, 0):
                             yr = yy
                             break
                         else:
                             continue
 
                     if bw_divs.index(x) == 0:
-                        draw.text(
+                        card_compose_draw.text(
                             (
                                 (
                                     x
@@ -239,10 +241,10 @@ class Render:
                             text=str(round(temp_chart[bw_divs.index(x)]))
                             + "°",
                             font=temp_chart_font_now,
-                            fill=(64, 64, 64, 255),
+                            fill=(255, 255, 255, 255),
                         )
                     else:
-                        draw.text(
+                        card_compose_draw.text(
                             (
                                 (
                                     x
@@ -258,9 +260,14 @@ class Render:
                             text=str(round(temp_chart[bw_divs.index(x)]))
                             + "°",
                             font=temp_chart_font,
-                            fill=(64, 64, 64, 221),
+                            fill=(255, 255, 255, 255),
                         )
                     break
+
+        card_compose_final.paste(card, card)
+        card_compose_final.paste(card_compose, card_compose)
+
+        im.paste(card_compose_final, (0, im.height - card_compose_final.height), card_compose_final)
 
         time = data["time"].split(":")
         time_list = list()
@@ -328,14 +335,14 @@ class Render:
                     (bw_divs[i] - text_size(time_list[i])[0], 370),
                     text=time_list[i],
                     font=time_font,
-                    fill=(48, 48, 48, 163),
+                    fill=(255, 255, 255, 255),
                 )
             else:
                 draw.text(
                     (bw_divs[i] - text_size(time_list[i])[0], 370),
                     text=time_list[i],
                     font=time_font_now,
-                    fill=(64, 64, 64, 255),
+                    fill=(255, 255, 255, 255),
                 )
 
         lines = textwrap.wrap(weather, width=17)
