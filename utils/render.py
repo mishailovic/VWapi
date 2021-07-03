@@ -15,7 +15,7 @@ class Render:
     def __init__(self):
         self.path = os.getcwd()
 
-    def make_graph(self, data, icon):
+    def make_graph(self, data):
         x = [0, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7]
         y = [data[0]] + data + [data[len(data) - 1]]
 
@@ -83,7 +83,7 @@ class Render:
         ).convert("RGBA")
         wind_ic = Image.open(f"{self.path}/resources/icons/wind_ic.png")
         hum_ic = Image.open(f"{self.path}/resources/icons/hum_ic.png")
-        graph = self.make_graph(temp_chart, data["icon"])
+        graph = self.make_graph(temp_chart)
 
         font_h = f"{self.path}/resources/fonts/Montserrat-Black.ttf"
         font_l = f"{self.path}/resources/fonts/Montserrat-Medium.ttf"
