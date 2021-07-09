@@ -76,7 +76,7 @@ class Render:
         im = Image.new("RGBA", (800, 656), (255, 255, 255, 0))
         bg = ImageEnhance.Brightness(
             Image.open(f"{self.path}/resources/backgrounds/" + data["icon"] + ".png")
-        ).enhance(0.6).filter(ImageFilter.GaussianBlur(radius=2)) # Reduce brightness to 0.6 to make text more visible and add blur
+        ).enhance(0.6) # Reduce brightness to 0.6 to make text more visible and add blur
         card = Image.open(f"{self.path}/resources/card/card.png")
         ic = Image.open(
             f"{self.path}/resources/icons/" + data["icon"] + ".png"
@@ -137,7 +137,12 @@ class Render:
                 font=font_l, size=32
             )  # Fallback to default font if no compatible font was found
 
-        im.paste(bg.resize(im.size, resample=Image.ANTIALIAS))
+        
+        blur_mask = Image.open(f"{self.path}/resources/card/blur_mask.png")
+        blur_bg = bg.filter(ImageFilter.GaussianBlur(radius=4))
+        bg.paste(blur_bg, blur_mask)
+
+        im.paste(bg)
         im.paste(ic, (48, 8), ic)
         draw = ImageDraw.Draw(im)
         text_size = ImageDraw.Draw(im).textsize
