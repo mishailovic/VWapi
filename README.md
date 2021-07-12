@@ -47,5 +47,7 @@ Usually StreamingResponse is slower than Response, but it depends on the environ
 If you want to use StreamingResponse set `USE_STREAMING_RESPONSE` environment variable to `true`.
 
 # Credits:
-Most of the code ~~stolen~~ taken from https://github.com/adrian-kalinin/TeleWeatherRobot huge thanks to its developer @adrian-kalinin  
-Weather icons taken from https://github.com/manifestinteractive/weather-underground-icons
+render.py based on https://github.com/adrian-kalinin/TeleWeatherRobot/blob/master/bot/utils/render.py 
+Huge thanks to its developer @adrian-kalinin  
+
+Thx to @notmyst33d for https://github.com/notmyst33d/Dripcons
