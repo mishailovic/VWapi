@@ -10,9 +10,9 @@
 <p align="center">Visual Weather api. Returns beautiful pictures with the current weather.
 </p>
 
-![image](https://weather.hotaru.ga?city=Москва)
-![image](https://weather.hotaru.ga?city=Frankfurt)
-![image](https://weather.hotaru.ga?city=Kyoto)
+![image](https://vwapi.herokuapp.com?city=Москва)
+![image](https://vwapi.herokuapp.com?city=Frankfurt)
+![image](https://vwapi.herokuapp.com?city=Kyoto)
 
 # Installation:
 
