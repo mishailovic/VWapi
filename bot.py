@@ -6,13 +6,11 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import (InlineQuery, InlineQueryResultArticle,
                            InlineQueryResultPhoto, InputTextMessageContent)
 
-from config import TOKEN, MONGO_DB, OWM_TOKEN
+from config import TOKEN, MONGO_DB, OWM_TOKEN, API_BASE
 from utils.http import get_session
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-
-API_BASE = "https://weather.hotaru.ga"
 
 if MONGO_DB:
     client = MongoClient(MONGO_DB)

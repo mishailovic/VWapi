@@ -11,3 +11,4 @@ pymongo
 dnspython
 lru-dict
 aiohttp
+aiogram

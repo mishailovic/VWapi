@@ -6,3 +6,5 @@ LRU_EXPIRE = 1800 # Time in seconds after which LRU cache entry expires (default
 TOKEN = ""  # Telegram bot token
 
 MONGO_DB = "" # Telegram bot MongoDB database for analytics (disabled if not set)
+
+API_BASE = "https://vwapi.herokuapp.com" # Change it to your local instance for better telegram bot performance.

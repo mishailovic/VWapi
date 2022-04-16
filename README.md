@@ -46,6 +46,35 @@ Usually StreamingResponse is slower than Response, but it depends on the environ
 
 If you want to use StreamingResponse set `USE_STREAMING_RESPONSE` environment variable to `true`.
 
+# Telegram bot setup
+
+<details>
+  <summary>Demo</summary>
+  
+  ![screenshot](assets/Screenshot_20220416-103030_Nekogram_2.png)
+  
+  ![screenshot](assets/Screenshot_20220416-103056_Nekogram_2.png)
+  
+</details>
+
+You can also setup your own copy of [@visualweatherbot](https://t.me/visualweatherbot)
+
+First, install mogodb, and create directory with database. (If you don't need analytics you can skip this step)
+
+```bash
+sudo apt install mongodb-server
+sudo mkdir /data
+sudo mkdir /data/db
+```
+Run ```mongo```, copy the connection url, and put it in ```config.py```. Then, talk with [@botfather](https://t.me/botfather) and get your telegram botapi token, you also need to put it in ```config.py```. 
+
+Now, form repo directory run: 
+```bash
+pip3 install -r requirements.txt
+python3 bot.py
+```
+Your telegram bot is ready.
+
 # Credits:
 render.py based on https://github.com/adrian-kalinin/TeleWeatherRobot/blob/master/bot/utils/render.py 
 Huge thanks to its developer @adrian-kalinin  
