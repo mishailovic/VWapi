@@ -18,7 +18,8 @@
       },
       "MONGO_DB": {
         "description": "Telegram bot MongoDB database for analytics (disabled if not set)",
-        "value": ""
+        "value": "",
+        "required": false
       },
       "API_BASE": {
         "description": "Change it to your local instance for better telegram bot performance.",
