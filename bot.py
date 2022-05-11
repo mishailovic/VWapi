@@ -1,5 +1,6 @@
 import urllib
 import uuid
+import os
 
 from pymongo import MongoClient
 from aiogram import Bot, Dispatcher, executor, types
@@ -118,4 +119,20 @@ async def inline_echo(inline_query: InlineQuery):
 
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    # Heroku defines DYNO environment vaiable
+    if os.environ.get("DYNO"):
+        app_name = os.environ.get("APP_NAME")
+
+        async def on_startup(dp):
+            await bot.set_webhook(f"https://{app_name}.herokuapp.com/bot/{TOKEN}")
+
+        executor.start_webhook(
+            dispatcher=dp,
+            webhook_path=f"/bot/{TOKEN}",
+            on_startup=on_startup,
+            skip_updates=True,
+            host="localhost",
+            port=8081, # Caddy will take care of that
+        )
+    else:
+        executor.start_polling(dp, skip_updates=True)

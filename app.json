@@ -3,18 +3,25 @@
     "description": "Visual Weather api. Returns beautiful pictures with the current weather.",
     "repository": "https://github.com/mishailovic/VWapi",
     "website": "https://github.com/mishailovic/VWapi",
+    "stack": "container",
     "env": {
+      "APP_NAME": {
+        "description": "Heroku app name",
+        "value": "vwapi"
+      },
       "BOT_TOKEN": {
         "description": "Your Telegram bot token",
         "value": ""
       },
       "LRU_SIZE": {
         "description": "Size on an LRU cache, by default takes around 51 MB of RAM when full",
-        "value": "1024"
+        "value": "1024",
+        "required": false
       },
       "LRU_EXPIRE": {
         "description": "Time in seconds after which LRU cache entry expires (default: 30 min)",
-        "value": "1800"
+        "value": "1800",
+        "required": false
       },
       "MONGO_DB": {
         "description": "Telegram bot MongoDB database for analytics (disabled if not set)",
@@ -23,7 +30,8 @@
       },
       "API_BASE": {
         "description": "Change it to your local instance for better telegram bot performance.",
-        "value": "https://vwapi.herokuapp.com"
+        "value": "https://vwapi.herokuapp.com",
+        "required": false
       }
     }
   }
