@@ -57,7 +57,7 @@ If you want to use StreamingResponse set `USE_STREAMING_RESPONSE` environment va
   
 </details>
 
-You can also setup your own copy of [@visualweatherbot](https://t.me/visualweatherbot)
+You can also setup your own copy of [@visualweatherbot](https://t.me/visualweatherbot) (which is currently down due to heroku free dyno policy (-̩̩̩-̩̩̩-̩̩̩-̩̩̩-̩̩̩___-̩̩̩-̩̩̩-̩̩̩-̩̩̩-̩̩̩) )
 
 First, install mogodb, and create directory with database. (If you don't need analytics you can skip this step)
 
