@@ -64,33 +64,7 @@ async def send_weather(message: types.Message):
     else:
         await message.reply(
             "Не удалось подключиться к API, вы ввели несуществующий город, или хост упал."
-        )
-
-# hadle text messages
-@dp.message_handler(lambda message: message.text, run_task=True)
-async def handle_text_message(message: types.Message):
-    if MONGO_DB:
-        if not analytics.find_one({"_id": message.from_user.id}):
-            await create_user_entry(message.from_user.id)
-
-        analytics.update_one({"_id": message.from_user.id}, {"$inc": {"used_weather": 1}})
-
-    city = message.text.split()[0]
-    city = urllib.parse.quote_plus(city)
-    session = await get_session()
-    async with session.get(API_BASE, params={"city": city}) as resp:
-        if resp.headers["content-type"] == "image/jpeg":
-            response = await resp.read()
-        else:
-            response = None
-    
-    if response:
-        await message.answer_chat_action("upload_photo")
-        await message.reply_photo(response)
-    else:
-        await message.reply(
-            "Не удалось подключиться к API, вы ввели несуществующий город, или хост упал."
-        )    
+        )  
 
 
 @dp.inline_handler(run_task=True)
