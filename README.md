@@ -75,8 +75,14 @@ python3 bot.py
 ```
 Your telegram bot is ready.
 
+# Localisation
+Currently supported languages: "en", "ru"
+If you wish to add your own language, you can easily edit few lines in [/utils/constants.py](https://github.com/mishailovic/VWapi/blob/master/utils/constants.py#L3) and make pull request.
+
 # Credits:
 render.py based on https://github.com/adrian-kalinin/TeleWeatherRobot/blob/master/bot/utils/render.py 
 Huge thanks to its developer @adrian-kalinin  
 
 Thx to @notmyst33d for https://github.com/notmyst33d/Dripcons
+
+All [contributors](https://github.com/mishailovic/VWapi/graphs/contributors) of this project.
