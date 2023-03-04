@@ -35,7 +35,7 @@ import io
 language = "en" # can be "en" or "ru"
 place = "Moscow" # can be any city, place, street, or site, geocoder automatically selects location. 
 timestamp = round(time.time()) # optional timestamp, can be any unix timestamp from now, to now + three days 
-r = requests.get(f"https://vwapi.herokuapp.com?lang={language}&city={place}&timestamp={timestamp}")
+r = requests.get(f"https://api.hotaru.ga?lang={language}&city={place}&timestamp={timestamp}")
 image = Image.open(io.BytesIO(r.content))
 image.show()
 ```
