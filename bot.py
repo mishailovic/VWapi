@@ -48,7 +48,7 @@ async def send_weather(message: types.Message):
         analytics.update_one({"_id": message.from_user.id}, {"$inc": {"used_weather": 1}})
 
     if not (city := message.get_args()):
-        return await message.reply("Введите город")
+        return await message.reply("Вы не ввели город. Пожалуйста введите город в формате /weather <Город>")
 
     city = urllib.parse.quote_plus(city)
     session = await get_session()
